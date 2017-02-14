@@ -7,52 +7,48 @@
   <body>
     <h1>Storj Browser Upload Example</h1>
     <input type="file" id="input" onchange="handleFiles(this.files)">
+    <img id="pic"></img>
+    <iframe></iframe>
+    <div id="fileList">
+      <p>No files selected!</p>
+    </div>
     <script>
-      var bucketId = '24213949f1400a77cfcbd287';
-      var fileId = '3d130c5b7e6316fd3196b3c0';
+    var btn = document.createElement("BUTTON")
+    document.body.appendChild(btn); 
+      var bucketId = '4f04f386282c86c7dc8a03ce';
+      var fileId = '236c5f2786ae6f960b835be4';
 
       var options = {
         bridge: 'http://localhost:8080',
-        // basicAuth: {
-        //   email: 'email',
-        //   password: 'pass'
-        // }
-        key: '1b91d8dc6d69c8debc34f9324c5054b9c2a73fba7884fae8dd163bc3be099514'
+        basicAuth: {
+          email: 'email',
+          password: 'pass'
+        }
+        //key: '1b91d8dc6d69c8debc34f9324c5054b9c2a73fba7884fae8dd163bc3be099514'
       };
-
+      
       var storj = new Storj(options);
 
-      storj.getData(bucketId, fileId, (err, data) => {
-        console.log('got decrypted stream')
-        console.log(data)
-      })     
 
-      storj.getFile(bucketId, fileId, (file) => {
-        console.log(file)
-        file.on('done', () => {
-          console.log('finished getting file')
-        })
+      storj.getData(bucketId, fileId, (err, data) => {
+        console.log('got decrypted data')
+        var blob = new Blob([data], {type:"image/jpg"})
+        var img = document.createElement("img");
+        document.getElementById("pic").src = window.URL.createObjectURL(blob);
+        document.getElementById("pic").height = 400;
+        document.body.appendChild(img); 
       })
 
       var handleFiles = function(files) {
         var rs = window.getFileStream(files);
-        // storj.uploadData(bucketId, files[0].name, rs, (err, res) => {
-        //   console.log(err)
-        //   console.log(res)
-        // })
+        storj.uploadData(bucketId, files[0].name, rs, (err, res) => {
+          console.log(err)
+          console.log(res)
+        })
 
-        // storj.on('encrypted', ()=>{
-        //   console.log('encrypted')
-        // })
-        storj.createFile(bucketId, files[0].name, rs, (file) => {
-          file.on('error', (err) => {
-            console.log(err);
-          });
-          file.on('done', (res) => {
-            console.log(res);
-            console.log('finished uploading file')
-          });
-        });
+        storj.on('encrypted', ()=>{
+          console.log('encrypted')
+        })
       };
     </script>
   </body>

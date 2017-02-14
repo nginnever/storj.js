@@ -1,12 +1,11 @@
 {
-  "name": "storj",
+  "name": "storj-js",
   "version": "0.0.0",
   "description": "Storj.io browser library",
   "main": "lib/index.js",
   "directories": {},
   "scripts": {
     "build": "browserify lib/browser.js > storj.es6.js",
-    "postbuild": "babel storj.es6.js > storj.es5.js",
     "posttest": "npm run linter",
     "test": "npm run test-node && npm run test-browser",
     "test-node": "nyc --reporter=text --reporter=html tape test/**/*.js",
